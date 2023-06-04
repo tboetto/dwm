@@ -44,6 +44,9 @@ static const Layout layouts[] = {
 	{ "[M]",      monocle },
 };
 
+/* define external interactions */
+#define STATUSBAR "dwmblocks"
+
 /* key definitions */
 #define MODKEY Mod4Mask
 #define TAGKEYS(KEY,TAG) \
