@@ -168,6 +168,8 @@ static void expose(XEvent *e);
 static void focus(Client *c);
 static void focusin(XEvent *e);
 static void focusmon(const Arg *arg);
+static void focusmonnum(const Arg *arg);
+static void focusmontoggle(const Arg *arg);
 static void focusstack(const Arg *arg);
 static Atom getatomprop(Client *c, Atom prop);
 static int getrootptr(int *x, int *y);
@@ -266,11 +268,12 @@ static void (*handler[LASTEvent]) (XEvent *) = {
 };
 static Atom wmatom[WMLast], netatom[NetLast];
 static int running = 1;
+static int restart = 0;
 static Cur *cursor[CurLast];
 static Clr **scheme;
 static Display *dpy;
 static Drw *drw;
-static Monitor *mons, *selmon;
+static Monitor *mons, *selmon, *lastselmon;
 static Window root, wmcheckwin;
 
 /* configuration, allows nested code to access above variables */
@@ -866,6 +869,35 @@ focusmon(const Arg *arg)
 	if ((m = dirtomon(arg->i)) == selmon)
 		return;
 	unfocus(selmon->sel, 0);
+	lastselmon = selmon;
+	selmon = m;
+	focus(NULL);
+}
+
+void
+focusmonnum(const Arg *arg)
+{
+	Monitor *m;
+
+	for (m = mons; m && m->num != arg->i; m = m->next);
+	if (!m || m == selmon)
+		return;
+	unfocus(selmon->sel, 0);
+	lastselmon = selmon;
+	selmon = m;
+	focus(NULL);
+}
+
+void
+focusmontoggle(const Arg *arg)
+{
+	Monitor *m;
+
+	if (!lastselmon || lastselmon == selmon)
+		return;
+	m = lastselmon;
+	unfocus(selmon->sel, 0);
+	lastselmon = selmon;
 	selmon = m;
 	focus(NULL);
 }
@@ -1317,6 +1349,7 @@ propertynotify(XEvent *e)
 void
 quit(const Arg *arg)
 {
+	restart = arg->i;
 	running = 0;
 }
 
@@ -2251,5 +2284,7 @@ main(int argc, char *argv[])
 	run();
 	cleanup();
 	XCloseDisplay(dpy);
+	if (restart)
+		execvp(argv[0], argv);
 	return EXIT_SUCCESS;
 }

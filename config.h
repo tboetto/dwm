@@ -88,6 +88,10 @@ static const Key keys[] = {
 	{ MODKEY,                       XK_period, focusmon,       {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_comma,  tagmon,         {.i = -1 } },
 	{ MODKEY|ShiftMask,             XK_period, tagmon,         {.i = +1 } },
+	{ MODKEY,                       XK_F1,     focusmonnum,    {.i = 0 } },
+	{ MODKEY,                       XK_F2,     focusmonnum,    {.i = 1 } },
+	{ MODKEY,                       XK_F3,     focusmonnum,    {.i = 2 } },
+	{ MODKEY,                       XK_grave,  focusmontoggle, {0} },
 	TAGKEYS(                        XK_1,                      0)
 	TAGKEYS(                        XK_2,                      1)
 	TAGKEYS(                        XK_3,                      2)
@@ -98,6 +102,7 @@ static const Key keys[] = {
 	TAGKEYS(                        XK_8,                      7)
 	TAGKEYS(                        XK_9,                      8)
 	{ MODKEY|ShiftMask,             XK_q,      quit,           {0} },
+	{ MODKEY|ShiftMask,             XK_r,      quit,           {.i = 1} },
 };
 
 /* button definitions */
